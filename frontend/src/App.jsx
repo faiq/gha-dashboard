@@ -5,7 +5,7 @@ import { createContext, useState } from "react";
 
 export const UserContext = createContext(null);
 
-function App() {
+function App () {
   const [user, setUser] = useState(null);
   return (
     <BrowserRouter>
