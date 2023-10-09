@@ -1,12 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import MakeHeaders from "../utils/headers";
 import "../styles/lookup.css"
 import "../styles/table.css"
 import { Graph } from "../components/Graph.jsx"
 import { TableRow, Table, TableHeader } from "../components/Table.jsx"
-
+import { UserContext } from '../App';
 let page = 0;
 export default function Lookup() {
+  const { user, setUser } = useContext(UserContext);
   const [repositories, setRepositories] = useState([]);
   const [suggestedRepositories, setSuggestedRepositories] = useState([]);
   const [selected, setSelected] = useState("");
@@ -209,7 +210,6 @@ export default function Lookup() {
                     )
                     }
                 </div>
-
                 <button type="submit">Search</button>
             </form>
           </div>

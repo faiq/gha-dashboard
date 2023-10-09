@@ -1,52 +1,64 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/home.css"
-
-const AUTH_ENDPOINT = "https://github.com/login/oauth/authorize"
-const data = {
-  "client_id": process.env.REACT_APP_CLIENT_ID,
-  "redirect_uri": "http://localhost:3000/",
-  "scope": ["repo"]
-}
+import { UserContext } from '../App';
 
 export default function Home() {
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   useEffect(() => {
-    let token = localStorage.getItem("token");
-    if (token) {
-      navigate("/search");
-      return
+    if (user === null) {
+      fetch("http://localhost:3000/auth", {
+        credentials: 'include',
+      }).then((res) => {
+        if (res.status === 200) {
+          setUser({});
+          navigate("/search");
+          return
+        }
+      })
     }
+
     let qs = window.location.search;
     let params = new URLSearchParams(qs);
     let code = params.get("code");
-    if (code && !token){
-      console.log("calling backend!!");
-      fetch("http://localhost:3000/getToken?"+params.toString()).then((response) =>{
-        let data = response.json()
-        console.log(data);
-        return data;
-      }).then((res) => {
-        console.log('this is res '+res);
-        if (res.access_token){
-          localStorage.setItem("token", res.access_token);
-        }
+    if (code){
+      fetch("http://localhost:3000/token?"+params.toString(),
+        {
+          credentials: 'include',
+        }).then(() =>{
+          setUser({});
+          navigate("/search");
+          return
       }).catch((e) => {
         console.log(e);
       })
     }
   }, [])
-  const searchParams = new URLSearchParams(data);
+
+  function Login () {
+    fetch("http://localhost:3000/login").then((res) =>{
+      if (res.status === 200) {
+        return res.json();
+      }
+    }).then(data => {
+      window.location.assign(data.url);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+  }
+
   return (
     <div class="splash-container">
       <h1>Github Actions Dashboard</h1>
       <p class="description">Github Actions Dashboard is a visualization tool to help you identify what jobs are breaking in your workflow.</p>
-      <a href={`${AUTH_ENDPOINT}?${searchParams.toString()}`} class="github-signin-btn">
+      <button class="github-signin-btn" onClick={Login} >
         <FontAwesomeIcon style={{ marginRight: '1em'}} icon={faGithub}/>
         Log in with Github
-      </a>
+      </button>
     </div>
   );
 }
