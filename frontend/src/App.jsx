@@ -1,16 +1,16 @@
-import Home from "./pages/Home";
-import Lookup from "./pages/Lookup";
-import Graph from "./pages/Graph";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { createContext, useState } from "react";
+import Home from './pages/Home';
+import Lookup from './pages/Lookup';
+import Graph from './pages/Graph';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { createContext, useState } from 'react';
 
 export const UserContext = createContext(null);
 
-function App() {
+function App () {
   const [user, setUser] = useState(null);
   return (
     <BrowserRouter>
-     <UserContext.Provider value={{ user: user, setUser: setUser }}>
+     <UserContext.Provider value={{ user, setUser }}>
        <Routes>
          <Route path="/" exact element={<Home />} />
          <Route path="/search" exact element={<Lookup />} />
