@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import MakeHeaders from "../utils/headers";
+import { UserContext } from '../App';
 
 let page = 0;
 export default function Lookup() {
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   const [repositories, setRepositories] = useState([]);
   const [suggestedRepositories, setSuggestedRepositories] = useState([]);
