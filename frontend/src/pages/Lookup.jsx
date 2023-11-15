@@ -166,53 +166,53 @@ export default function Lookup() {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center mx-auto h-auto text-center max-w-lg">
-        <div className="w-full">
-          <form onSubmit={getWorkflowData} className="mb-8">
-            <label>Search For a Repository</label>
-            <input
-              className="w-full border-grey-light p-3 rounded-lg focus:ring-primary focus:border-primary border-black border-2 text-lg font-semibold mr-3 outline-none "
-              type="text"
-              placeholder="Repository Name ..."
-              onChange={filterRepositories}
-              onFocus={(event) => {
-                event.target.setAttribute('autocomplete', 'off');
-              }}
-              value={selected}
-              name="repository"
-            />
-              <ul className="max-h-[100px] overflow-y-auto">
-                {suggestedRepositories.map((repo)=>{
-                  return <li className="w-full p-3 text-center block rounded-lg border-grey-light border-2"
-                          key={repo.id} onClick={() => {
-                            console.log(repositories);
-                            setSelectedFromList(repo)
-                            }}>{repo.name}</li>
-                })}
-              </ul>
-              <label>Select a workflow to graph</label>
-            {
-              workflows ? (
-              <select
-                placeholder="Workflow Name ..."
-                name="workflow"
-              >
-              {workflows.map((workflow) => {
-                return <option className="text-center">{workflow.name}</option>
+    <div className="flex justify-center items-center mx-auto text-center">
+        <form onSubmit={getWorkflowData} className="mx-auto">
+          <label
+            className="mb-10 w-full">Search For a Repository</label>
+          <input
+            className="mb-10 w-full border-grey-light p-3 rounded-lg focus:ring-primary focus:border-primary border-black border-2 text-lg font-semibold mr-3 outline-none "
+            type="text"
+            placeholder="Repository Name ..."
+            onChange={filterRepositories}
+            onFocus={(event) => {
+              event.target.setAttribute('autocomplete', 'off');
+            }}
+            value={selected}
+            name="repository"
+          />
+            <ul className="max-h-[100px] overflow-y-auto">
+              {suggestedRepositories.map((repo)=>{
+                return <li className="w-full p-3 text-center block rounded-lg border-grey-light border-2"
+                        key={repo.id} onClick={() => {
+                          console.log(repositories);
+                          setSelectedFromList(repo)
+                          }}>{repo.name}</li>
               })}
-              </select>
-              ) : (
-                <div></div>
-              )
-            }
-            <button
-              className="text-black px-5 rounded-lg py-3 cursor-pointer text-center text-lg font-semibold tracking-wide"
-              type={"submit"}
+            </ul>
+           <label
+            className="mb-10 w-full"> Select a workflow to graph</label>
+          {
+            workflows ? (
+            <select
+              placeholder="Workflow Name ..."
+              name="workflow"
             >
-              Search
-            </button>
-          </form>
-        </div>
+            {workflows.map((workflow) => {
+              return <option className="text-center">{workflow.name}</option>
+            })}
+            </select>
+            ) : (
+              <div></div>
+            )
+          }
+          <button
+            className="mb-10 text-black px-5 rounded-lg py-3 cursor-pointer text-center text-lg font-semibold tracking-wide"
+            type={"submit"}
+          >
+            Search
+          </button>
+        </form>
     </div>
   )
 }
