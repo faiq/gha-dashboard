@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import MakeHeaders from "../utils/headers";
 import "../styles/lookup.css"
+import "../styles/table.css"
 import { Graph } from "../components/Graph.jsx"
 import { TableRow, Table, TableHeader } from "../components/Table.jsx"
 
@@ -223,6 +224,7 @@ export default function Lookup() {
                   ))
                   }
                   Header=<TableHeader headers={["job name", "times broken"]}/>
+                  tableClassName="styled-table"
                 />
               </div>
               <div className="placeholder">

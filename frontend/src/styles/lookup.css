@@ -74,6 +74,8 @@
     border-radius: 4px;
     box-sizing: border-box;
     text-align: center; /* Optionally center text horizontally */
+    max-height: 500px;
+    overflow: auto;
 }
 
 .placeholder h2 {

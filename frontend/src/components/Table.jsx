@@ -1,14 +1,18 @@
-export function TableHeader({ headers }){
+export function TableHeader({ headers}){
   return (
-    headers.map((header, index) => {
-      return <th key={index}>{header}</th>
-    })
+    <tr>
+      {
+      headers.map((header, index) => {
+        return <th key={index}>{header}</th>
+      })
+      }
+    </tr>
   )
 }
 
-export function TableRow({ rowData }){
-  return ( 
-    <tr>
+export function TableRow({ rowData, rowClassName}){
+  return (
+    <tr className={rowClassName}>
     {
       rowData.map((colItem, colIndex) => {
         return <td key={colIndex}>{colItem}</td>
@@ -18,10 +22,10 @@ export function TableRow({ rowData }){
   )
 }
 
-export function Table({ TableRows, Header}) {
+export function Table({ TableRows, Header, tableClassName }) {
   return (
   <>
-    <table>
+    <table className={tableClassName}>
       <thead>{Header}</thead>
       <tbody>
         {TableRows}
