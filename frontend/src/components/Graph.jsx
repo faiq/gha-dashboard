@@ -19,6 +19,7 @@ ChartJS.register(
 
 export function Graph({repository, jobBreakDown, workflowName}) {
   const options = {
+   maintainAspectRatio: false,
     plugins: {
       title: {
         display: true,
@@ -35,11 +36,11 @@ export function Graph({repository, jobBreakDown, workflowName}) {
       },
     },
   };
-  const labels = jobBreakDown.map((job) => { 
+  const labels = jobBreakDown.map((job) => {
     return job.date
   });
   const graphData = {
-    labels,  
+    labels,
     datasets: [
       {
         label: 'Success',
@@ -55,6 +56,6 @@ export function Graph({repository, jobBreakDown, workflowName}) {
     ],
   };
   return (
-    <Bar options={options} data={graphData} width={100} height={30}/>
+    <Bar options={options} data={graphData} height={100}/>
   )
 }

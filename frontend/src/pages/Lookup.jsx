@@ -228,7 +228,7 @@ export default function Lookup() {
                 />
               </div>
               <div className="placeholder">
-                  <h2>Graph Breakdown</h2>
+                <h2>Graph Breakdown</h2>
                   <Graph repository={repository} jobBreakDown={jobBreakDown} workflowName={workflow} />
               </div>
             </div>
