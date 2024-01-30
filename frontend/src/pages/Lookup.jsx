@@ -1,14 +1,19 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import MakeHeaders from "../utils/headers";
+import "../styles/lookup.css"
+import { Graph } from "../components/Graph.jsx"
+import { TableRow, Table, TableHeader } from "../components/Table.jsx"
 
 let page = 0;
 export default function Lookup() {
-  const navigate = useNavigate();
   const [repositories, setRepositories] = useState([]);
   const [suggestedRepositories, setSuggestedRepositories] = useState([]);
   const [selected, setSelected] = useState("");
   const [workflows, setWorkflows] = useState([]);
+  const [jobBreakDown, setJobBreakDown] = useState([]);
+  const [repository, setRepository] = useState("");
+  const [workflow, setWorkflow] = useState("");
+  const [failureCountMap, setFailureCountMap] = useState({});
   useEffect(() => {
     if (suggestedRepositories.length > 0 || selected.length === 0 || suggestedRepositories.includes(selected)) {
       return
@@ -102,6 +107,8 @@ export default function Lookup() {
     e.preventDefault();
     let repository=e.target.repository.value;
     let workflow=e.target.workflow.value;
+    setRepository(repository);
+    setWorkflow(workflow);
     let workflowID=-1;
     for (const i in workflows) {
       let cand=workflows[i]
@@ -124,6 +131,7 @@ export default function Lookup() {
     })
     const promises = workflowStatus.workflow_runs.map(fetchJobData);
     const jobStatus = await Promise.allSettled(promises);
+    let failureCount = {};
     let jobBreakDown = jobStatus.map((resObj) => {
       let nonSkippedResults = {
         passed: [],
@@ -141,6 +149,10 @@ export default function Lookup() {
             name: job.name,
             conclusion: job.conclusion,
           })
+          if (!(job.name in failureCount))  {
+            failureCount[job.name] = 0;
+          }
+          failureCount[job.name] += 1;
         }
       }
       return {
@@ -149,14 +161,9 @@ export default function Lookup() {
         date: resObj.value.jobs[0].started_at.split("T")[0],
       }
     })
-    navigate("/graph", {
-      state: {
-        jobBreakDown: jobBreakDown,
-        workflowName: workflow,
-        repository: repository
-      }
-    })
-}
+    setJobBreakDown(jobBreakDown);
+    setFailureCountMap(failureCount);
+  }
 
 
   function setSelectedFromList(repo) {
@@ -166,53 +173,67 @@ export default function Lookup() {
   }
 
   return (
-    <div className="flex justify-center items-center mx-auto text-center">
-        <form onSubmit={getWorkflowData} className="mx-auto">
-          <label
-            className="mb-10 w-full">Search For a Repository</label>
-          <input
-            className="mb-10 w-full border-grey-light p-3 rounded-lg focus:ring-primary focus:border-primary border-black border-2 text-lg font-semibold mr-3 outline-none "
-            type="text"
-            placeholder="Repository Name ..."
-            onChange={filterRepositories}
-            onFocus={(event) => {
-              event.target.setAttribute('autocomplete', 'off');
-            }}
-            value={selected}
-            name="repository"
-          />
-            <ul className="max-h-[100px] overflow-y-auto">
-              {suggestedRepositories.map((repo)=>{
-                return <li className="w-full p-3 text-center block rounded-lg border-grey-light border-2"
-                        key={repo.id} onClick={() => {
-                          console.log(repositories);
-                          setSelectedFromList(repo)
-                          }}>{repo.name}</li>
-              })}
-            </ul>
-           <label
-            className="mb-10 w-full"> Select a workflow to graph</label>
+        <div className="container">
+          <div className="form-container">
+            <form onSubmit={getWorkflowData} className="form" id="myForm">
+                <div className="type-ahead-container">
+                    <label for="repositoryName">Repository Name:</label>
+                    <input value={selected} type="text" id="repositoryName" name="repository" className="type-ahead-input" placeholder="Type to search..." required
+                      onChange={filterRepositories}
+                      onFocus={(event) => {
+                        event.target.setAttribute('autocomplete', 'off');
+                      }}
+                    />
+                    <ul className="type-ahead-dropdown">
+                      {suggestedRepositories.map((repo)=>{
+                        return <li className="type-ahead-item"
+                                key={repo.id} onClick={() => {
+                                  setSelectedFromList(repo)
+                                  }}>{repo.name}</li>
+                      })}
+                    </ul>
+                </div>
+
+                <div className="select-workflow">
+                    <label>Select Workflow:</label>
+                      {
+                      workflows ? (
+                        <select id="selectOption" name="workflow" required>
+                          {workflows.map((workflow) => {
+                            return <option className="text-center">{workflow.name}</option>
+                          })}
+                        </select>
+                    ) : (
+                      <div></div>
+                    )
+                    }
+                </div>
+
+                <button type="submit">Search</button>
+            </form>
+          </div>
           {
-            workflows ? (
-            <select
-              placeholder="Workflow Name ..."
-              name="workflow"
-            >
-            {workflows.map((workflow) => {
-              return <option className="text-center">{workflow.name}</option>
-            })}
-            </select>
+          (jobBreakDown.length) > 0 ? (
+            <div className="placeholder-container">
+              <div className="placeholder">
+                <h2> Most Frequently Broken </h2>
+                <Table
+                  TableRows={Object.keys(failureCountMap).map((k) => (
+                    <TableRow rowData={[k, failureCountMap[k]]}></TableRow>
+                  ))
+                  }
+                  Header=<TableHeader headers={["job name", "times broken"]}/>
+                />
+              </div>
+              <div className="placeholder">
+                  <h2>Graph Breakdown</h2>
+                  <Graph repository={repository} jobBreakDown={jobBreakDown} workflowName={workflow} />
+              </div>
+            </div>
             ) : (
-              <div></div>
-            )
+            <div></div>
+          )
           }
-          <button
-            className="mb-10 text-black px-5 rounded-lg py-3 cursor-pointer text-center text-lg font-semibold tracking-wide"
-            type={"submit"}
-          >
-            Search
-          </button>
-        </form>
     </div>
   )
 }

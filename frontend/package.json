@@ -44,9 +44,7 @@
     ]
   },
   "devDependencies": {
-    "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.27",
-    "tailwindcss": "^3.3.3"
+    "autoprefixer": "^10.4.14"
   },
   "proxy": "http://localhost:3001/"
 }

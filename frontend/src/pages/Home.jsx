@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "../styles/home.css"
 
 const AUTH_ENDPOINT = "https://github.com/login/oauth/authorize"
 const data = {
@@ -39,22 +40,13 @@ export default function Home() {
   }, [])
   const searchParams = new URLSearchParams(data);
   return (
-    <div className="mx-auto grid grid-cols-5 gap-20 lg:w-10/12 w-12/12 pt-60">
-      <div className="col-span-2 pt-16 ">
-        <h1 className="text-5xl font-bold">Github Actions Dashboard</h1>
-        <p className="mb-12 text-gray-400 text-md">
-        </p>
-        <a
-          className="bg-black text-white px-6 py-2.5 rounded-full cursor-pointer text-center text-md font-semibold uppercase tracking-wider"
-          href={`${AUTH_ENDPOINT}?${searchParams.toString()}`}
-        >
-          <FontAwesomeIcon icon={faGithub} className="pr-2"/>
-          Log in with Github
-        </a>
-      </div>
-      <div className="rounded-full col-span-3">
-        demo video went here
-      </div>
+    <div class="splash-container">
+      <h1>Github Actions Dashboard</h1>
+      <p class="description">Github Actions Dashboard is a visualization tool to help you identify what jobs are breaking in your workflow.</p>
+      <a href={`${AUTH_ENDPOINT}?${searchParams.toString()}`} class="github-signin-btn">
+        <FontAwesomeIcon style={{ marginRight: '1em'}} icon={faGithub}/>
+        Log in with Github
+      </a>
     </div>
   );
 }

@@ -1,4 +1,3 @@
-import { useLocation } from "react-router-dom";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -18,14 +17,12 @@ ChartJS.register(
   Legend
 );
 
-export default function Graph() {
-  const location = useLocation();
-  const data=location.state
+export function Graph({repository, jobBreakDown, workflowName}) {
   const options = {
     plugins: {
       title: {
         display: true,
-        text: `Breakdown for ${data.repository} ${data.workflowName}`,
+        text: `Breakdown for ${repository} ${workflowName}`,
       },
     },
     responsive: true,
@@ -38,7 +35,7 @@ export default function Graph() {
       },
     },
   };
-  const labels = data.jobBreakDown.map((job) => { 
+  const labels = jobBreakDown.map((job) => { 
     return job.date
   });
   const graphData = {
@@ -47,12 +44,12 @@ export default function Graph() {
       {
         label: 'Success',
         backgroundColor: '#3D7E63',
-        data: data.jobBreakDown.map((res) => { return res.jobResults.passed.length } )
+        data: jobBreakDown.map((res) => { return res.jobResults.passed.length } )
       },
       {
         label: 'Fail',
         backgroundColor: '#DD5F5D',
-        data: data.jobBreakDown.map((res) => { return res.jobResults.failed.length } )
+        data: jobBreakDown.map((res) => { return res.jobResults.failed.length } )
       }
 
     ],
