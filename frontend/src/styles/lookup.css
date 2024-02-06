@@ -1,0 +1,92 @@
+.container {
+    width: 80%;
+    margin: 20px auto;
+}
+
+.form-container {
+    margin-top: 20px;
+}
+
+.type-ahead-container,
+.select-workflow {
+    margin-bottom: 20px;
+}
+
+.type-ahead-container label,
+.select-workflow label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.type-ahead-input,
+.type-ahead-dropdown,
+.select-workflow select {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.type-ahead-container {
+    position: relative;
+}
+
+.type-ahead-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 4px 4px;
+    box-sizing: border-box;
+    background-color: #fff;
+    display: none;
+    list-style: none;
+}
+
+.type-ahead-input:focus + .type-ahead-dropdown,
+.type-ahead-dropdown:hover {
+    display: block;
+}
+
+.type-ahead-item {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.type-ahead-item:hover {
+    background-color: #f0f0f0;
+}
+
+/* Placeholder styling */
+.placeholder-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px; /* Adjust as needed */
+}
+
+.placeholder {
+    width: 100%; /* Adjust as needed */
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    text-align: center; /* Optionally center text horizontally */
+    max-height: 400px;
+    overflow: auto;
+}
+
+.placeholder h2 {
+      margin: 0; /* Remove default margin */
+}
+
+.form button {
+    padding: 10px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
