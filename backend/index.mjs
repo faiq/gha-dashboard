@@ -6,7 +6,7 @@ import session from 'express-session';
 import cors from 'cors';
 
 const corsOptions = {
-  origin: '*',
+  origin: 'http://localhost:3000',
   optionsSuccessStatus: 200
 };
 
@@ -85,6 +85,7 @@ app.get('/token', function (req, res) {
 });
 
 app.get('/auth', function (req, res) {
+  console.log('auth called');
   if (!req.session.token) {
     res.status(401).send('unauthorized');
     return;
