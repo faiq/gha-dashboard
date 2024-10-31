@@ -7,7 +7,7 @@
   "license": "ISC",
   "scripts": {
      "lint": "eslint --fix --ext .js,.jsx .",
-     "start": "nodemon ."
+     "start": "node index.mjs"
   },
   "dependencies": {
     "cookie-parser": "^1.4.6",
