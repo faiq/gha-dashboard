@@ -45,12 +45,12 @@ app.get('/login', function (req, res) {
 });
 
 app.get('/token', function (req, res) {
-  if (!req.query || req.query === {}) {
+  if (!req.query || req.query === null || req.query === {}) {
     res.status(406).send('code is required');
     return
   }
   const code = req.query.code;
-  if (code === "" || len(code) === 0 || !code) {
+  if (!code || code == null || code === "" || code.length === 0) {
     res.status(406).send('code is required');
     return
   }
