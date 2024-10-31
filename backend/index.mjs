@@ -45,8 +45,11 @@ app.get('/login', function (req, res) {
 });
 
 app.get('/token', function (req, res) {
-  console.log("/token called");
   const code = req.query.code;
+  if (code === "" || len(code) === 0 || !code) {
+    res.status(406).send('code is required');
+    return
+  }
   const githubURL = 'https://github.com/login/oauth/access_token';
   const getTokenData = {
     client_id: process.env.CLIENT_ID,
