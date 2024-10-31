@@ -24,6 +24,10 @@ app.use(bodyParser.json());
 app.use(session(sessionOptions));
 app.use(cors(corsOptions));
 
+app.get('/healthz', function(req, res) {
+  res.send('ok');
+});
+
 app.get('/login', function (req, res) {
   console.log("/login called");
   const authEndpoint = 'https://github.com/login/oauth/authorize';
