@@ -97,7 +97,8 @@ app.get('/token', function (req, res) {
 
 app.get('/auth', function (req, res) {
   console.log('auth called');
-  if (!req.session.token) {
+  console.log(req.session.token)
+  if (!req.session.token || req.session.token === '') {
     res.status(401).send('unauthorized');
     return;
   }
