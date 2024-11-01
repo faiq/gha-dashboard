@@ -114,10 +114,11 @@ app.get('/auth', function (req, res) {
 app.get("/repositories", async function (req, res) {
   // TODO: figure out how to use middleware for this.
   console.log('/repositories called');
-  if (!req.session.token) {
+  if (req.session.token === undefined || !req.session.token || req.session.token === '') {
     res.status(401).send('unauthorized');
     return;
   }
+  console.log(req.session.token);
   let page = 1;
   let allUserRepoistoriesMap = {};
   let allUserRepositories = [];
