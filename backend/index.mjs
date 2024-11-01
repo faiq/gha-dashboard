@@ -56,11 +56,13 @@ app.get('/login', function (req, res) {
 });
 
 app.get('/token', function (req, res) {
+  console.log('token called');
   if (!req.query || req.query === null || req.query === {}) {
     res.status(406).send('code is required');
     return
   }
   const code = req.query.code;
+  console.log('code is', code);
   if (!code || code == null || code === "" || code.length === 0) {
     res.status(406).send('code is required');
     return
@@ -98,7 +100,7 @@ app.get('/token', function (req, res) {
 app.get('/auth', function (req, res) {
   console.log('auth called');
   console.log(req.session.token)
-  if (!req.session.token || req.session.token === '') {
+  if (req.session.token === undefined || !req.session.token || req.session.token === '') {
     res.status(401).send('unauthorized');
     return;
   }
