@@ -152,7 +152,7 @@ app.get("/repositories", async function (req, res) {
       userRepositoriesForCall = [];
       break
     }
-    allUserRepoistoriesMap[item.id]=item.full_name;
+    allUserRepositoriesMap[item.id]=item.full_name;
     userRepositoriesForCall.push({ name: item.full_name });
   }
   req.session.allUserRepositoriesMap = allUserRepositoriesMap;
