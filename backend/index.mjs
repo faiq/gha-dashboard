@@ -99,7 +99,6 @@ app.get('/token', function (req, res) {
 
 app.get('/auth', function (req, res) {
   console.log('auth called');
-  console.log(req.session.token)
   if (req.session.token === undefined || !req.session.token || req.session.token === '') {
     res.status(401).send('unauthorized');
     return;
@@ -113,46 +112,53 @@ app.get('/auth', function (req, res) {
 // fetch all of the users repositories until we hit something we already have seen. cache the result and call it done.
 app.get("/repositories", async function (req, res) {
   // TODO: figure out how to use middleware for this.
-  console.log('/repositories called');
   if (req.session.token === undefined || !req.session.token || req.session.token === '') {
     res.status(401).send('unauthorized');
     return;
   }
-  console.log(req.session.token);
-  let page = 1;
-  let allUserRepoistoriesMap = {};
-  let allUserRepositories = [];
-  while (true) {
-    const token = req.session.token;
-    const searchParams = new URLSearchParams({
-      per_page: 100,
-      page
-    });
-    const opts = {
-      headers: makeHeaders(token),
-    }
-    let response = await fetch('https://api.github.com/user/repos?' + searchParams.toString(),opts)
-    if (!response.ok) {
-      console.error(`failed to get user repos with ${response.status}`)
-      res.status(500).json(allUserRepositories);
-      return
-    }
-    let data = await response.json();
-    if (data.length === 0) {
-      res.status(200).json(allUserRepositories);
-      return
-    }
-    for (let i = 0; i < data.length; i++) {
-      let item = data[i];
-      if (item.id in allUserRepoistoriesMap) {
-        res.status(200).json(allUserRepositories);
-        return
-      }
-      allUserRepoistoriesMap[item.id]=item.full_name;
-      allUserRepositories.push({ name: item.full_name });
-    }
-    page+=1;
+  let allUserRepositoriesMap = req.session.allUserRepositoriesMap;
+  if (allUserRepositoriesMap === undefined) {
+    req.session.allUserRepositoriesMap = {};
+    allUserRepositoriesMap = {};
   }
+  let page = req.session.page;
+  if (page === undefined) {
+    req.session.page = 1;
+    page = req.session.page;
+  }
+  let userRepositoriesForCall = [];
+  const token = req.session.token;
+  const searchParams = new URLSearchParams({
+    per_page: 100,
+    page,
+    sort: 'pushed',
+  });
+  const opts = {
+    headers: makeHeaders(token),
+  }
+  let response = await fetch('https://api.github.com/user/repos?' + searchParams.toString(),opts)
+  if (!response.ok) {
+    console.error(`failed to get user repos with ${response.status}`)
+    res.status(500).json(userRepositoriesForCall);
+    return
+  }
+  let data = await response.json();
+  for (let i = 0; i < data.length; i++) {
+    let item = data[i];
+    // if we saw this already we don't need to do anything, just flatten the list
+    if (allUserRepositoriesMap.has(item.id)) {
+      for (const [_, name] of Object.entries(allUserRepositoriesMap)) {
+        userRepositoriesForCall.push({ name: name});
+      }
+      break
+    }
+    allUserRepoistoriesMap[item.id]=item.full_name;
+    userRepositoriesForCall.push({ name: item.full_name });
+  }
+  req.session.allUserRepositoriesMap = allUserRepositoriesMap;
+  req.session.page += 1;
+  res.status(200).json(userRepositoriesForCall);
+  return
 });
 
 app.get("/workflows", async function (req, res) {
@@ -262,7 +268,6 @@ function makeHeaders (token) {
     'X-GitHub-Api-Version': '2022-11-28'
   };
 }
-
 
 http.createServer(app).listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'));
