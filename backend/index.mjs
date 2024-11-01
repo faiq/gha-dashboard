@@ -148,7 +148,7 @@ app.get("/repositories", async function (req, res) {
   for (let i = 0; i < data.length; i++) {
     let item = data[i];
     // if we saw this already we don't need to do anything, just flatten the list
-    if (allUserRepositoriesMap.has(item.id)) {
+    if (item.id in allUserRepositoriesMap) {
       userRepositoriesForCall = [];
       break
     }
