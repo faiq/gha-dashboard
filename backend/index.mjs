@@ -11,6 +11,7 @@ var corsOptions = {
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
+      console.log('got request from ', origin, 'and rejecting')
       callback(null, false);
     }
   },
@@ -113,6 +114,7 @@ app.get('/auth', function (req, res) {
 app.get("/repositories", async function (req, res) {
   // TODO: figure out how to use middleware for this.
   if (req.session.token === undefined || !req.session.token || req.session.token === '') {
+    console.log('sent unauthorized request to repositories');
     res.status(401).send('unauthorized');
     return;
   }
@@ -147,9 +149,7 @@ app.get("/repositories", async function (req, res) {
     let item = data[i];
     // if we saw this already we don't need to do anything, just flatten the list
     if (allUserRepositoriesMap.has(item.id)) {
-      for (const [_, name] of Object.entries(allUserRepositoriesMap)) {
-        userRepositoriesForCall.push({ name: name});
-      }
+      userRepositoriesForCall = [];
       break
     }
     allUserRepoistoriesMap[item.id]=item.full_name;
