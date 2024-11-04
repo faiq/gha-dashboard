@@ -147,16 +147,19 @@ app.get("/repositories", async function (req, res) {
   let data = await response.json();
   for (let i = 0; i < data.length; i++) {
     let item = data[i];
-    // if we saw this already we don't need to do anything, just flatten the list
+    // skip over anything we have seen already
     if (item.id in allUserRepositoriesMap) {
-      userRepositoriesForCall = [];
-      break
+      continue
     }
+    // add the new stuff
     allUserRepositoriesMap[item.id]=item.full_name;
-    userRepositoriesForCall.push({ name: item.full_name });
   }
   req.session.allUserRepositoriesMap = allUserRepositoriesMap;
-  req.session.page += 1;
+  for (const id in allUserRepositoriesMap) {
+    const name = allUserRepositoriesMap[id];
+    userRepositoriesForCall.push({ name: name });
+  }
+  req.session.page += 1; // always adds page
   res.status(200).json(userRepositoriesForCall);
   return
 });
