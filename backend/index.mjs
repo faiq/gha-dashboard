@@ -45,7 +45,7 @@ app.get('/login', function (req, res) {
   const authEndpoint = 'https://github.com/login/oauth/authorize';
   const redirectData = {
     client_id: process.env.CLIENT_ID,
-    redirect_uri: 'http://localhost:3000/',
+    redirect_uri: 'https://marvelous-centaur-4ff8ce.netlify.app',
     scope: ['repo']
   };
   const searchParams = new URLSearchParams(redirectData);
