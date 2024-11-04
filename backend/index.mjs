@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 import session from 'express-session';
 import cors from 'cors';
 
-var whitelist = ['http://localhost:3000', 'http://localhost:8080']; //white list consumers
+var whitelist = ['https://marvelous-centaur-4ff8ce.netlify.app']; //white list consumers
 var corsOptions = {
   origin: function (origin, callback) {
     if (whitelist.indexOf(origin) !== -1) {
