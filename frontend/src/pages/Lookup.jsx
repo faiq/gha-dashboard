@@ -5,6 +5,7 @@ import { Graph } from '../components/Graph.jsx';
 import { TableRow, Table, TableHeader } from '../components/Table.jsx';
 import { UserContext } from '../App';
 import { useNavigate } from 'react-router-dom';
+import { BACKEND_URL, COMMON_HEADERS } from './consts';
 export default function Lookup () {
   const [repositories, setRepositories] = useState([]);
   const [suggestedRepositories, setSuggestedRepositories] = useState([]);
@@ -16,26 +17,34 @@ export default function Lookup () {
   const [failureCountMap, setFailureCountMap] = useState({});
   const { user } = useContext(UserContext);
   const navigate = useNavigate();
+
+  async function getRepositories () {
+    const data = await fetch(`${BACKEND_URL}/repositories`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: COMMON_HEADERS,
+      mode: 'cors',
+      cache: 'no-cache'
+    });
+    const fetchedRepositories = await data.json();
+    return fetchedRepositories;
+  }
+
   useEffect(() => {
-    async function getAllUsersRepositories () {
-      console.log(user);
-      if (user === null) {
-        navigate('/');
-        return;
-      }
-      const data = await fetch('/repositories', {
-        credentials: 'include'
-      });
-      const repositories = await data.json();
-      setRepositories(repositories);
+    if (user === null || user === undefined || !user.set) {
+      navigate('/');
+      return;
     }
-    getAllUsersRepositories();
+    getRepositories().then((newRepositories) => {
+      setRepositories([
+        ...newRepositories
+      ]);
+    });
   }, []);
 
-  function filterRepositories (e) {
+  async function filterAndFetchRepositories (e) {
     setSelected(e.target.value);
     const value = e.target.value;
-    console.log(value);
     if (value.length === 0) {
       setSuggestedRepositories([]);
       return;
@@ -44,9 +53,18 @@ export default function Lookup () {
     if (value.length > 2) {
       const regex = new RegExp(`${value}`, 'i');
       if (repositories.length === 0) {
-        return;
+        const newRepositories = await getRepositories();
+        setRepositories([
+          ...newRepositories
+        ]);
       }
       const suggested = repositories.filter(v => regex.test(v.name));
+      if (suggested.length === 0) {
+        const newRepositories = await getRepositories(value);
+        setRepositories([
+          ...newRepositories
+        ]);
+      }
       setSuggestedRepositories(suggested);
     }
   }
@@ -56,7 +74,7 @@ export default function Lookup () {
       repoName
     });
     console.log(repoName);
-    const data = await fetch('/workflows?' + searchParams.toString(), {
+    const data = await fetch(`${BACKEND_URL}/workflows?` + searchParams.toString(), {
       credentials: 'include'
     });
     if (!data.ok) {
@@ -77,7 +95,7 @@ export default function Lookup () {
       repository,
       workflowID
     };
-    const response = await fetch('/runs',
+    const response = await fetch(`${BACKEND_URL}/runs`,
       {
         method: 'POST',
         credentials: 'include',
@@ -88,7 +106,7 @@ export default function Lookup () {
         }
       }
     );
-    // TODO add failure scren
+    // TODO add failure screen
     if (!response.ok) {
       return;
     }
@@ -111,7 +129,7 @@ export default function Lookup () {
                 <div className="type-ahead-container">
                     <label for="repositoryName">Repository Name:</label>
                     <input value={selected} type="text" id="repositoryName" name="repository" className="type-ahead-input" placeholder="Type to search..." required
-                      onChange={filterRepositories}
+                      onChange={filterAndFetchRepositories}
                       onFocus={(event) => {
                         event.target.setAttribute('autocomplete', 'off');
                       }}

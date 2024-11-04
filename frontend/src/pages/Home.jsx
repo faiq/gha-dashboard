@@ -4,17 +4,22 @@ import { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/home.css';
 import { UserContext } from '../App';
+import { BACKEND_URL, COMMON_HEADERS } from './consts';
 
 export default function Home () {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
   useEffect(() => {
     if (user === null) {
-      fetch('http://localhost:3000/auth', {
-        credentials: 'include'
+      fetch(`${BACKEND_URL}/auth`, {
+        credentials: 'include',
+        method: 'GET',
+        headers: COMMON_HEADERS,
+        mode: 'cors',
+        cache: 'no-cache'
       }).then((res) => {
         if (res.status === 200) {
-          setUser({});
+          setUser({ set: true });
           navigate('/search');
         }
       });
@@ -23,14 +28,21 @@ export default function Home () {
     const qs = window.location.search;
     const params = new URLSearchParams(qs);
     const code = params.get('code');
-    console.log('got code', code);
-    if (code) {
-      fetch('http://localhost:3000/token?' + params.toString(),
+    if (!code || code == null) {
+      setUser({ set: false });
+    } else if (code !== null && code.length > 0) {
+      fetch(`${BACKEND_URL}/token?` + params.toString(),
         {
-          credentials: 'include'
-        }).then(() => {
-        setUser({});
-        navigate('/search');
+          credentials: 'include',
+          method: 'GET',
+          headers: COMMON_HEADERS,
+          mode: 'cors',
+          cache: 'no-cache'
+        }).then((res) => {
+        if (res.status === 200) {
+          setUser({ set: true });
+          navigate('/search');
+        }
       }).catch((e) => {
         console.log(e);
       });
@@ -38,16 +50,21 @@ export default function Home () {
   }, []);
 
   function Login () {
-    fetch('http://localhost:3000/login').then((res) => {
+    fetch(`${BACKEND_URL}/login`, {
+      credentials: 'include',
+      method: 'GET',
+      headers: COMMON_HEADERS,
+      mode: 'cors',
+      cache: 'no-cache'
+    }).then((res) => {
       if (res.status === 200) {
         return res.json();
       }
     }).then(data => {
       window.location.assign(data.url);
-    })
-      .catch((e) => {
-        console.log(e);
-      });
+    }).catch((e) => {
+      console.log(e);
+    });
   }
 
   return (
