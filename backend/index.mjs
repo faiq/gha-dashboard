@@ -26,7 +26,11 @@ const sessionOptions = {
   secret: process.env.SESSION_ID_SECRET || 'iamabanana',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false } // only for dev purpose
+  cookie: {
+    secure: true, // Ensure this is `true` in production
+    sameSite: 'none', // Required for cross-site cookies
+    partitioned: true, // Add the Partitioned attribute
+  },
 };
 
 const app = express();
