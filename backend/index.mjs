@@ -30,6 +30,8 @@ const sessionOptions = {
     secure: true, // Ensure this is `true` in production
     sameSite: 'none', // Required for cross-site cookies
     partitioned: true, // Add the Partitioned attribute
+    httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
   },
 };
 
@@ -95,6 +97,7 @@ app.get('/token', function (req, res) {
   }).then((data) => {
     const token = data.access_token;
     req.session.token = token;
+    console.log(req.session.token);
     res.send(req.session.sessionID);
   }).catch((err) => {
     console.error(err);
@@ -116,6 +119,7 @@ app.get('/auth', function (req, res) {
 // return a response that includes how many pages there are.
 // fetch all of the users repositories until we hit something we already have seen. cache the result and call it done.
 app.get("/repositories", async function (req, res) {
+  console.log(req.session);
   // TODO: figure out how to use middleware for this.
   if (req.session.token === undefined || !req.session.token || req.session.token === '') {
     console.log('sent unauthorized request to repositories');
