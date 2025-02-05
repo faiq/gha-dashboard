@@ -29,7 +29,6 @@ const cookieSessionOptions = {
   sameSite: 'none', // Required for cross-site cookies
   cookie: {
     httpOnly: true,
-    sameSite: 'none', // Required for cross-site cookies
     partitioned: true, // Add the Partitioned attribute
     maxAge: 1000 * 60 * 60 * 24, // 1 day
     secure: true,
@@ -183,7 +182,10 @@ app.get("/repositories", async function (req, res) {
 
 app.get("/workflows", async function (req, res) {
   console.log('/workflows called');
-  if (!req.session || !req.session.token) {
+  console.log('session from workflows '+ JSON.stringify(req.session));
+  // TODO: figure out how to use middleware for this.
+  if (req.session.token === undefined || !req.session.token || req.session.token === '') {
+    console.log('sent unauthorized request to repositories');
     res.status(401).send('unauthorized');
     return;
   }
