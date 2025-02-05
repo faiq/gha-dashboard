@@ -25,17 +25,20 @@ var corsOptions = {
 
 const cookieSessionOptions = {
   name: "__session",
-  keys: [process.env.SESSION_ID_SECRET, 'iamabanana'],
-  secure: true, // Ensure this is `true` in production
-  httpOnly: true,
-  sameSite: 'none', // Required for cross-site cookies
-  partitioned: true, // Add the Partitioned attribute
-  maxAge: 1000 * 60 * 60 * 24, // 1 day
+  keys: ['iamabanana', process.env.SESSION_ID_SECRET],
+  cookie: {
+    secure: true, // Ensure this is `true` in production
+    httpOnly: true,
+    sameSite: 'none', // Required for cross-site cookies
+    partitioned: true, // Add the Partitioned attribute
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+  }
 };
 
 
 const app = express();
 
+app.set('trust proxy', 1) // trust first proxy
 app.use(cors(corsOptions));
 app.set('port', process.env.PORT || 3001);
 app.use(bodyParser.json());
