@@ -31,7 +31,7 @@ const cookieSessionOptions = {
     sameSite: 'none', // Required for cross-site cookies
     partitioned: true, // Add the Partitioned attribute
     maxAge: 1000 * 60 * 60 * 24, // 1 day
-    secure: false,
+    secure: true,
   }
 };
 
@@ -40,6 +40,12 @@ const app = express();
 
 app.set('trust proxy', 1) // trust first proxy
 app.use(cookieSession(cookieSessionOptions));
+app.use((req, res, next)=>{
+    if (req["sessionCookies"]) {
+      req["sessionCookies"].secure = true;
+    }
+    next();
+});
 app.use(cors(corsOptions));
 app.set('port', process.env.PORT || 3001);
 app.use(bodyParser.json());
