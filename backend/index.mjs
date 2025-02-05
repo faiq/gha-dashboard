@@ -8,6 +8,7 @@ import cors from 'cors';
 var whitelist = ['https://marvelous-centaur-4ff8ce.netlify.app']; //white list consumers
 var corsOptions = {
   origin: function (origin, callback) {
+    console.log('Incoming origin:', origin); // Log the origin
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
