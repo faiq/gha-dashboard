@@ -120,7 +120,7 @@ app.get('/auth', function (req, res) {
 // return a response that includes how many pages there are.
 // fetch all of the users repositories until we hit something we already have seen. cache the result and call it done.
 app.get("/repositories", async function (req, res) {
-  console.log('session from repositories '+req.session);
+  console.log('session from repositories '+ JSON.stringify(req.session));
   // TODO: figure out how to use middleware for this.
   if (req.session.token === undefined || !req.session.token || req.session.token === '') {
     console.log('sent unauthorized request to repositories');
