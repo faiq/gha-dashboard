@@ -23,13 +23,17 @@ var corsOptions = {
 
 
 const cookieSessionOptions = {
-    keys: [process.env.SESSION_ID_SECRET, 'iamabanana'],
-    secure: true, // Ensure this is `true` in production
-    sameSite: 'none', // Required for cross-site cookies
-    partitioned: true, // Add the Partitioned attribute
-    httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
-    maxAge: 1000 * 60 * 60 * 24, // 1 day
+  secret: process.env.SESSION_ID_SECRET || 'iamabanana',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+     secure: true, // Ensure this is `true` in production
+     sameSite: 'none', // Required for cross-site cookies
+     partitioned: true, // Add the Partitioned attribute
+     maxAge: 1000 * 60 * 60 * 24, // 1 day
+  },
 };
+
 
 const app = express();
 
@@ -115,7 +119,7 @@ app.get('/auth', function (req, res) {
 // return a response that includes how many pages there are.
 // fetch all of the users repositories until we hit something we already have seen. cache the result and call it done.
 app.get("/repositories", async function (req, res) {
-  console.log(req.session);
+  console.log('session from repositories '+req.session);
   // TODO: figure out how to use middleware for this.
   if (req.session.token === undefined || !req.session.token || req.session.token === '') {
     console.log('sent unauthorized request to repositories');
