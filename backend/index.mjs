@@ -30,7 +30,8 @@ const cookieSessionOptions = {
   cookie: {
      secure: true, // Ensure this is `true` in production
      httpOnly: true,
-     sameSite: 'none', // Required for cross-site cookies
+     SameSite: 'none', // Required for cross-site cookies
+     partitioned: true, // Add the Partitioned attribute
      maxAge: 1000 * 60 * 60 * 24, // 1 day
   },
 };
@@ -38,10 +39,10 @@ const cookieSessionOptions = {
 
 const app = express();
 
-app.use(cookieSession(cookieSessionOptions));
 app.use(cors(corsOptions));
 app.set('port', process.env.PORT || 3001);
 app.use(bodyParser.json());
+app.use(cookieSession(cookieSessionOptions));
 
 app.get('/healthz', function(req, res) {
   res.send('ok');
