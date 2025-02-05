@@ -25,12 +25,12 @@ var corsOptions = {
 
 const cookieSessionOptions = {
   name: "__session",
-  keys: ['iamabanana', process.env.SESSION_ID_SECRET],
+  keys: ['iamabanana'],
   sameSite: 'none', // Required for cross-site cookies
+  maxAge: 1000 * 60 * 60 * 24, // 1 day
   cookie: {
     httpOnly: true,
     partitioned: true, // Add the Partitioned attribute
-    maxAge: 1000 * 60 * 60 * 24, // 1 day
     secure: true,
   }
 };
