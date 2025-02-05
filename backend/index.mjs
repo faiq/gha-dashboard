@@ -134,11 +134,7 @@ app.get("/repositories", async function (req, res) {
     res.status(401).send('unauthorized');
     return;
   }
-  let allUserRepositoriesMap = req.session.allUserRepositoriesMap;
-  if (allUserRepositoriesMap === undefined) {
-    req.session.allUserRepositoriesMap = {};
-    allUserRepositoriesMap = {};
-  }
+
   let page = req.session.page;
   if (page === undefined) {
     req.session.page = 1;
@@ -161,20 +157,6 @@ app.get("/repositories", async function (req, res) {
     return
   }
   let data = await response.json();
-  for (let i = 0; i < data.length; i++) {
-    let item = data[i];
-    // skip over anything we have seen already
-    if (item.id in allUserRepositoriesMap) {
-      continue
-    }
-    // add the new stuff
-    allUserRepositoriesMap[item.id]=item.full_name;
-  }
-  req.session.allUserRepositoriesMap = allUserRepositoriesMap;
-  for (const id in allUserRepositoriesMap) {
-    const name = allUserRepositoriesMap[id];
-    userRepositoriesForCall.push({ name: name });
-  }
   req.session.page += 1; // always adds page
   res.status(200).json(userRepositoriesForCall);
   return
