@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import bodyParser from 'body-parser';
 import fetch from 'node-fetch';
-import cookie-session from 'cookie-session';
+import cookieSession from 'cookie-session';
 import cors from 'cors';
 
 var whitelist = ['https://marvelous-centaur-4ff8ce.netlify.app']; //white list consumers
@@ -35,7 +35,7 @@ const app = express();
 
 app.set('port', process.env.PORT || 3001);
 app.use(bodyParser.json());
-app.use(cookie-session(cookieSessionOptions));
+app.use(cookieSession(cookieSessionOptions));
 app.use(cors(corsOptions));
 
 app.get('/healthz', function(req, res) {
