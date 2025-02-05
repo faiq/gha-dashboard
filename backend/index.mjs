@@ -2,7 +2,7 @@ import express from 'express';
 import http from 'http';
 import bodyParser from 'body-parser';
 import fetch from 'node-fetch';
-import session from 'express-session';
+import cookie-session from 'cookie-session';
 import cors from 'cors';
 
 var whitelist = ['https://marvelous-centaur-4ff8ce.netlify.app']; //white list consumers
@@ -22,24 +22,20 @@ var corsOptions = {
 };
 
 
-const sessionOptions = {
-  secret: process.env.SESSION_ID_SECRET || 'iamabanana',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
+const cookieSessionOptions = {
+    keys: [process.env.SESSION_ID_SECRET, 'iamabanana'],
     secure: true, // Ensure this is `true` in production
     sameSite: 'none', // Required for cross-site cookies
     partitioned: true, // Add the Partitioned attribute
     httpOnly: true, // Prevent client-side JavaScript from accessing the cookie
     maxAge: 1000 * 60 * 60 * 24, // 1 day
-  },
 };
 
 const app = express();
 
 app.set('port', process.env.PORT || 3001);
 app.use(bodyParser.json());
-app.use(session(sessionOptions));
+app.use(cookie-session(cookieSessionOptions));
 app.use(cors(corsOptions));
 
 app.get('/healthz', function(req, res) {
@@ -97,7 +93,7 @@ app.get('/token', function (req, res) {
   }).then((data) => {
     const token = data.access_token;
     req.session.token = token;
-    console.log(req.session.token);
+    console.log(req.session);
     res.send(req.session.sessionID);
   }).catch((err) => {
     console.error(err);
