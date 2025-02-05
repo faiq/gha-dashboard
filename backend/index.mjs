@@ -26,6 +26,7 @@ var corsOptions = {
 const cookieSessionOptions = {
   name: "__session",
   keys: ['iamabanana', process.env.SESSION_ID_SECRET],
+  sameSite: 'none', // Required for cross-site cookies
   cookie: {
     httpOnly: true,
     sameSite: 'none', // Required for cross-site cookies
