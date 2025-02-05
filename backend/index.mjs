@@ -39,10 +39,10 @@ const cookieSessionOptions = {
 const app = express();
 
 app.set('trust proxy', 1) // trust first proxy
+app.use(cookieSession(cookieSessionOptions));
 app.use(cors(corsOptions));
 app.set('port', process.env.PORT || 3001);
 app.use(bodyParser.json());
-app.use(cookieSession(cookieSessionOptions));
 
 app.get('/healthz', function(req, res) {
   res.send('ok');
