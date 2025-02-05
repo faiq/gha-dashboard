@@ -157,6 +157,10 @@ app.get("/repositories", async function (req, res) {
     return
   }
   let data = await response.json();
+  for (let i = 0; i < data.length; i++) {
+    let item = data[i];
+    userRepositoriesForCall.push({ name: item.full_name });
+  }
   req.session.page += 1; // always adds page
   res.status(200).json(userRepositoriesForCall);
   return
