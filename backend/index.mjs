@@ -29,6 +29,7 @@ const cookieSessionOptions = {
   saveUninitialized: false,
   cookie: {
      secure: true, // Ensure this is `true` in production
+     httpOnly: true,
      sameSite: 'none', // Required for cross-site cookies
      partitioned: true, // Add the Partitioned attribute
      maxAge: 1000 * 60 * 60 * 24, // 1 day
@@ -99,7 +100,7 @@ app.get('/token', function (req, res) {
     const token = data.access_token;
     req.session.token = token;
     console.log(req.session);
-    res.send(req.session.sessionID);
+    res.status(200).json({ message: 'Session set' });
   }).catch((err) => {
     console.error(err);
     res.status(500).send('failed to authenticate on behalf of user');
