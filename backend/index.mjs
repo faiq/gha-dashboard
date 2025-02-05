@@ -31,6 +31,7 @@ const cookieSessionOptions = {
     sameSite: 'none', // Required for cross-site cookies
     partitioned: true, // Add the Partitioned attribute
     maxAge: 1000 * 60 * 60 * 24, // 1 day
+    secure: false,
   }
 };
 
