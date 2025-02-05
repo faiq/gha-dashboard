@@ -27,7 +27,6 @@ const cookieSessionOptions = {
   name: "__session",
   keys: ['iamabanana', process.env.SESSION_ID_SECRET],
   cookie: {
-    secure: true, // Ensure this is `true` in production
     httpOnly: true,
     sameSite: 'none', // Required for cross-site cookies
     partitioned: true, // Add the Partitioned attribute
@@ -43,12 +42,6 @@ app.use(cors(corsOptions));
 app.set('port', process.env.PORT || 3001);
 app.use(bodyParser.json());
 app.use(cookieSession(cookieSessionOptions));
-app.use((req, res, next)=>{
-    if (req.sessionCookies) {
-      req["sessionCookies"].secure = true;
-    }
-    next();
-});
 
 app.get('/healthz', function(req, res) {
   res.send('ok');
