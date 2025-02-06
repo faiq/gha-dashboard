@@ -1,6 +1,5 @@
 import express from 'express';
 import http from 'http';
-import bodyParser from 'body-parser';
 import fetch from 'node-fetch';
 import cookieSession from 'cookie-session';
 import cors from 'cors';
@@ -8,11 +7,9 @@ import cors from 'cors';
 var whitelist = ['https://marvelous-centaur-4ff8ce.netlify.app']; //white list consumers
 var corsOptions = {
   origin: function (origin, callback) {
-    console.log('Incoming origin:', origin); // Log the origin
     if (whitelist.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      console.log('got request from ', origin, 'and rejecting')
       callback(null, false);
     }
   },
@@ -48,7 +45,7 @@ app.use((req, res, next)=>{
 });
 app.use(cors(corsOptions));
 app.set('port', process.env.PORT || 3001);
-app.use(bodyParser.json());
+app.use(express.json());
 
 app.get('/healthz', function(req, res) {
   res.send('ok');
@@ -105,7 +102,6 @@ app.get('/token', function (req, res) {
   }).then((data) => {
     const token = data.access_token;
     req.session.token = token;
-    console.log(req.session);
     res.status(200).json({ message: 'Session set' });
   }).catch((err) => {
     console.error(err);
@@ -126,8 +122,7 @@ app.get('/auth', function (req, res) {
 // associated with the user. The github repository does not
 // return a response that includes how many pages there are.
 // fetch all of the users repositories until we hit something we already have seen. cache the result and call it done.
-app.get("/repositories", async function (req, res) {
-  console.log('session from repositories '+ JSON.stringify(req.session));
+app.post("/repositories", async function (req, res) {
   // TODO: figure out how to use middleware for this.
   if (req.session.token === undefined || !req.session.token || req.session.token === '') {
     console.log('sent unauthorized request to repositories');
@@ -135,12 +130,13 @@ app.get("/repositories", async function (req, res) {
     return;
   }
 
+  let sentRepositories = req.body.repositories;
   let page = req.session.page;
   if (page === undefined) {
     req.session.page = 1;
     page = req.session.page;
   }
-  let userRepositoriesForCall = [];
+  let userRepositoriesForCall = {};
   const token = req.session.token;
   const searchParams = new URLSearchParams({
     per_page: 100,
@@ -157,11 +153,18 @@ app.get("/repositories", async function (req, res) {
     return
   }
   let data = await response.json();
+  let seen = false;
   for (let i = 0; i < data.length; i++) {
     let item = data[i];
-    userRepositoriesForCall.push({ name: item.full_name });
+    if (item.id in sentRepositories) {
+      seen=true;
+      continue
+    }
+    userRepositoriesForCall[item.id] = item.name
   }
-  req.session.page += 1; // always adds page
+  if (!seen) {
+    req.session.page += 1; // add a page if the thing isn't seen
+  }
   res.status(200).json(userRepositoriesForCall);
   return
 });

@@ -7,7 +7,7 @@ import { UserContext } from '../App';
 import { useNavigate } from 'react-router-dom';
 import { BACKEND_URL, COMMON_HEADERS } from './consts';
 export default function Lookup () {
-  const [repositories, setRepositories] = useState([]);
+  const [repositories, setRepositories] = useState({});
   const [suggestedRepositories, setSuggestedRepositories] = useState([]);
   const [selected, setSelected] = useState('');
   const [workflows, setWorkflows] = useState({});
@@ -21,10 +21,11 @@ export default function Lookup () {
   async function getRepositories () {
     const data = await fetch(`${BACKEND_URL}/repositories`, {
       credentials: 'include',
-      method: 'GET',
+      method: 'POST',
       headers: COMMON_HEADERS,
       mode: 'cors',
-      cache: 'no-cache'
+      cache: 'no-cache',
+      body: JSON.stringify(repositories)
     });
     const fetchedRepositories = await data.json();
     return fetchedRepositories;
@@ -36,9 +37,7 @@ export default function Lookup () {
       return;
     }
     getRepositories().then((newRepositories) => {
-      setRepositories([
-        ...newRepositories
-      ]);
+      setRepositories(newRepositories);
     });
   }, []);
 
@@ -54,16 +53,15 @@ export default function Lookup () {
       const regex = new RegExp(`${value}`, 'i');
       if (repositories.length === 0) {
         const newRepositories = await getRepositories();
-        setRepositories([
-          ...newRepositories
-        ]);
+        setRepositories(newRepositories);
       }
-      const suggested = repositories.filter(v => regex.test(v.name));
+      const suggested = Object.keys(repositories).filter((id) => {
+        const name = repositories[id];
+        return regex.test(name);
+      }).map((k) => repositories[k]);
       if (suggested.length === 0) {
-        const newRepositories = await getRepositories(value);
-        setRepositories([
-          ...newRepositories
-        ]);
+        const newRepositories = await getRepositories();
+        setRepositories(newRepositories);
       }
       setSuggestedRepositories(suggested);
     }
@@ -117,9 +115,9 @@ export default function Lookup () {
     setFailureCountMap(failureCount);
   }
   function setSelectedFromList (repo) {
-    setSelected(repo.name);
+    setSelected(repo);
     setSuggestedRepositories([]);
-    fetchWorkflows(repo.name);
+    fetchWorkflows(repo);
   }
 
   return (
@@ -135,11 +133,11 @@ export default function Lookup () {
                       }}
                     />
                     <ul className="type-ahead-dropdown">
-                      {suggestedRepositories.map((repo) => {
+                      {suggestedRepositories.forEach((repo, i) => {
                         return <li className="type-ahead-item"
-                                key={repo.id} onClick={() => {
+                                key={i} onClick={() => {
                                   setSelectedFromList(repo);
-                                }}>{repo.name}</li>;
+                                }}>{repo}</li>;
                       })}
                     </ul>
                 </div>
