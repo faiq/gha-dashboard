@@ -28,9 +28,9 @@ const cookieSessionOptions = {
   keys: ['iamabanana'],
   sameSite: 'none', // Required for cross-site cookies
   maxAge: 1000 * 60 * 60 * 24, // 1 day
+  partitioned: true, // Add the Partitioned attribute
   cookie: {
     httpOnly: true,
-    partitioned: true, // Add the Partitioned attribute
     secure: true,
   }
 };
