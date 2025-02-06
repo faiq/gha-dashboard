@@ -156,7 +156,7 @@ app.post("/repositories", async function (req, res) {
   let seen = false;
   for (let i = 0; i < data.length; i++) {
     let item = data[i];
-    if (item.id in sentRepositories) {
+    if (Object.keys(sentRepositories) !== 0 && item.id in sentRepositories) {
       seen=true;
       continue
     }
