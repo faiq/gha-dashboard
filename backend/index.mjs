@@ -130,7 +130,7 @@ app.post("/repositories", async function (req, res) {
     return;
   }
   let sentRepositories = req.body.repositories;
-  console.log(sentRepositories);
+  console.log(sentRepositories, req.body, 'here');
   let page = req.session.page;
   if (page === undefined) {
     req.session.page = 1;
@@ -156,7 +156,7 @@ app.post("/repositories", async function (req, res) {
   let seen = false;
   for (let i = 0; i < data.length; i++) {
     let item = data[i];
-    if (Object.keys(sentRepositories) !== 0 && item.id in sentRepositories) {
+    if (sentRepositories !== undefined && item.id in sentRepositories) {
       seen=true;
       continue
     }
