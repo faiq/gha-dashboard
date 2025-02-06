@@ -129,8 +129,8 @@ app.post("/repositories", async function (req, res) {
     res.status(401).send('unauthorized');
     return;
   }
-
   let sentRepositories = req.body.repositories;
+  console.log(sentRepositories);
   let page = req.session.page;
   if (page === undefined) {
     req.session.page = 1;

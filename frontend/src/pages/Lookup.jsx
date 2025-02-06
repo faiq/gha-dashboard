@@ -25,7 +25,9 @@ export default function Lookup () {
       headers: COMMON_HEADERS,
       mode: 'cors',
       cache: 'no-cache',
-      body: JSON.stringify(repositories)
+      body: JSON.stringify({
+        repositories: repositories
+      })
     });
     const fetchedRepositories = await data.json();
     return fetchedRepositories;
