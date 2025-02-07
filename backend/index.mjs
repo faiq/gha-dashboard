@@ -201,6 +201,7 @@ app.post('/runs', async function(req, res) {
   const token = req.session.token;
   const repository = req.body.repository;
   const workflowID = req.body.workflowID;
+  console.log(repository, workflowID, 'request body');
   const response = await fetch(`https://api.github.com/repos/${repository}/actions/workflows/${workflowID}/runs`,
     {
       headers: makeHeaders(token)
@@ -237,7 +238,7 @@ app.post('/runs', async function(req, res) {
         failureCount[job.name] += 1;
       }
     }
-    console.log(resObj.value.jobs[0]);
+    console.log(resObj.value.jobs[0].run_id);
     return {
       jobResults: nonSkippedResults,
       id: resObj.value.jobs[0].run_id,

@@ -102,11 +102,11 @@ export default function Lookup () {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify(postData),
+        mode: 'cors',
         headers: {
-          ...COMMON_HEADERS,
-          Accept: 'application/json'
-        },
-        mode: 'cors'
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
       }
     );
     // TODO add failure screen
