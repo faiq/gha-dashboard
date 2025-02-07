@@ -207,6 +207,7 @@ app.post('/runs', async function(req, res) {
     }
   )
   if (!response.ok) {
+     console.log(response, 'this is broken')
      res.status(500).send('failed to fetch runs for workflow');
   }
   const workflowStatus = await response.json();
