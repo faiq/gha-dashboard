@@ -6,6 +6,7 @@ import { TableRow, Table, TableHeader } from '../components/Table.jsx';
 import { UserContext } from '../App';
 import { useNavigate } from 'react-router-dom';
 import { BACKEND_URL, COMMON_HEADERS } from './consts';
+import { ClipLoader } from 'react-spinners';
 export default function Lookup () {
   const [repositories, setRepositories] = useState({});
   const [suggestedRepositories, setSuggestedRepositories] = useState([]);
@@ -16,6 +17,7 @@ export default function Lookup () {
   const [workflow, setWorkflow] = useState('');
   const [failureCountMap, setFailureCountMap] = useState({});
   const { user } = useContext(UserContext);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   async function getRepositories () {
@@ -26,7 +28,7 @@ export default function Lookup () {
       mode: 'cors',
       cache: 'no-cache',
       body: JSON.stringify({
-        repositories: repositories
+        repositories
       })
     });
     const fetchedRepositories = await data.json();
@@ -85,6 +87,7 @@ export default function Lookup () {
 
   async function getWorkflowData (e) {
     e.preventDefault();
+    setLoading(true);
     const repository = e.target.repository.value;
     const workflow = e.target.workflow.value;
     setRepository(repository);
@@ -114,7 +117,9 @@ export default function Lookup () {
     const failureCount = data.failureCount;
     setJobBreakDown(jobBreakDown);
     setFailureCountMap(failureCount);
+    setLoading(false);
   }
+
   function setSelectedFromList (repo) {
     setSelected(repo);
     setSuggestedRepositories([]);
@@ -162,7 +167,9 @@ export default function Lookup () {
                           )
                     }
                 </div>
-                <button type="submit">Search</button>
+                <button type="submit" disabled={loading}>
+                  {loading ? <ClipLoader size={20} color="#ffffff" /> : 'Search'}
+                </button>
             </form>
           </div>
           {
