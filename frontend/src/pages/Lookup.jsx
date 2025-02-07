@@ -103,13 +103,15 @@ export default function Lookup () {
         credentials: 'include',
         body: JSON.stringify(postData),
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        }
+          ...COMMON_HEADERS,
+          Accept: 'application/json'
+        },
+        mode: 'cors'
       }
     );
     // TODO add failure screen
     if (!response.ok) {
+      setLoading(false);
       return;
     }
     const data = await response.json();
