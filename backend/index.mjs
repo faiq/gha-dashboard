@@ -238,10 +238,16 @@ app.post('/runs', async function(req, res) {
         failureCount[job.name] += 1;
       }
     }
-    console.log(resObj.value.jobs[0].run_id);
+    if (resObj.value.jobs[0] !== undefined) {
+      return {
+        jobResults: nonSkippedResults,
+        id: resObj.value.jobs[0].run_id,
+        date: resObj.value.jobs[0].started_at.split('T')[0]
+      };
+    }
     return {
       jobResults: nonSkippedResults,
-      id: resObj.value.jobs[0].run_id,
+      id: '1111111111',
       date: resObj.value.jobs[0].started_at.split('T')[0]
     };
   });
