@@ -22,7 +22,7 @@ var corsOptions = {
 
 const cookieSessionOptions = {
   name: "__session",
-  keys: ['iamabanana'],
+  keys: [process.env.COOKIEKEY],
   sameSite: 'none', // Required for cross-site cookies
   maxAge: 1000 * 60 * 60 * 24, // 1 day
   partitioned: true, // Add the Partitioned attribute
@@ -52,7 +52,6 @@ app.get('/healthz', function(req, res) {
 });
 
 app.get('/login', function (req, res) {
-  console.log("/login called");
   const authEndpoint = 'https://github.com/login/oauth/authorize';
   const redirectData = {
     client_id: process.env.CLIENT_ID,
@@ -68,7 +67,6 @@ app.get('/login', function (req, res) {
 });
 
 app.get('/token', function (req, res) {
-  console.log('token called');
   if (!req.query || req.query === null || req.query === {}) {
     res.status(406).send('code is required');
     return
@@ -109,7 +107,6 @@ app.get('/token', function (req, res) {
 });
 
 app.get('/auth', function (req, res) {
-  console.log('auth called');
   if (req.session.token === undefined || !req.session.token || req.session.token === '') {
     res.status(401).send('unauthorized');
     return;
@@ -124,12 +121,10 @@ app.get('/auth', function (req, res) {
 app.post("/repositories", async function (req, res) {
   // TODO: figure out how to use middleware for this.
   if (req.session.token === undefined || !req.session.token || req.session.token === '') {
-    console.log('sent unauthorized request to repositories');
     res.status(401).send('unauthorized');
     return;
   }
   let sentRepositories = req.body.repositories;
-  console.log(sentRepositories, req.body, 'here');
   let page = req.session.page;
   if (page === undefined || Object.keys(sentRepositories).length === 0) {
     req.session.page = 0;
@@ -172,7 +167,6 @@ app.post("/repositories", async function (req, res) {
 });
 
 app.get("/workflows", async function (req, res) {
-  console.log('/workflows called');
   // TODO: figure out how to use middleware for this.
   if (req.session.token === undefined || !req.session.token || req.session.token === '') {
     console.log('sent unauthorized request to repositories');
@@ -206,7 +200,6 @@ app.get("/workflows", async function (req, res) {
 });
 
 app.post('/runs', async function(req, res) {
-  console.log('/runs called');
   if (!req.session || !req.session.token) {
     res.status(401).send('unauthorized');
     return;
