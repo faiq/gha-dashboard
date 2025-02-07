@@ -37,12 +37,6 @@ const app = express();
 
 app.set('trust proxy', 1) // trust first proxy
 app.use(cookieSession(cookieSessionOptions));
-app.use((req, res, next)=>{
-    if (req["sessionCookies"]) {
-      req["sessionCookies"].secure = true;
-    }
-    next();
-});
 app.use(cors(corsOptions));
 app.set('port', process.env.PORT || 3001);
 app.use(express.json());
@@ -242,6 +236,7 @@ app.post('/runs', async function(req, res) {
         failureCount[job.name] += 1;
       }
     }
+    console.log(resObj.value.jobs[0]);
     return {
       jobResults: nonSkippedResults,
       id: resObj.value.jobs[0].run_id,
