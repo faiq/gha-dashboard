@@ -74,7 +74,6 @@ app.get('/token', function (req, res) {
     return
   }
   const code = req.query.code;
-  console.log('code is', code);
   if (!code || code == null || code === "" || code.length === 0) {
     res.status(406).send('code is required');
     return
@@ -161,10 +160,7 @@ app.post("/repositories", async function (req, res) {
       seen=true;
       continue
     }
-    if (i ===  0){
-      console.log('this is item', item);
-    }
-    userRepositoriesForCall[item.id] = item.name
+    userRepositoriesForCall[item.id] = item.full_name
   }
   if (!seen) {
     req.session.page += 1; // add a page if the thing isn't seen
@@ -177,7 +173,6 @@ app.post("/repositories", async function (req, res) {
 
 app.get("/workflows", async function (req, res) {
   console.log('/workflows called');
-  console.log('session from workflows '+ JSON.stringify(req.session));
   // TODO: figure out how to use middleware for this.
   if (req.session.token === undefined || !req.session.token || req.session.token === '') {
     console.log('sent unauthorized request to repositories');
