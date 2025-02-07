@@ -51,7 +51,6 @@ export default function Lookup () {
       return;
     }
     // TODO: move this to a trie datastructure.
-    console.log(value);
     if (value.length > 2) {
       const regex = new RegExp(`${value}`, 'i');
       if (repositories.length === 0) {
@@ -66,7 +65,6 @@ export default function Lookup () {
         const newRepositories = await getRepositories();
         setRepositories(newRepositories);
       }
-      console.log(suggested);
       setSuggestedRepositories(suggested);
     }
   }
@@ -136,12 +134,15 @@ export default function Lookup () {
                       }}
                     />
                     <ul className="type-ahead-dropdown">
-                      {suggestedRepositories.forEach((repo, i) => {
-                        return <li className="type-ahead-item"
-                                key={i} onClick={() => {
-                                  setSelectedFromList(repo);
-                                }}>{repo}</li>;
-                      })}
+                      {
+                        suggestedRepositories.map((repo, i) => {
+                          return <li className="type-ahead-item"
+                                  key={i} onClick={() => {
+                                    setSelectedFromList(repo);
+                                  }}>{repo}
+                                 </li>;
+                        })
+                      }
                     </ul>
                 </div>
 
