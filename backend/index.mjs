@@ -132,8 +132,8 @@ app.post("/repositories", async function (req, res) {
   let sentRepositories = req.body.repositories;
   console.log(sentRepositories, req.body, 'here');
   let page = req.session.page;
-  if (page === undefined) {
-    req.session.page = 1;
+  if (page === undefined || Object.keys(sentRepositories).length === 0) {
+    req.session.page = 0;
     page = req.session.page;
   }
   let userRepositoriesForCall = {};
@@ -154,16 +154,22 @@ app.post("/repositories", async function (req, res) {
   }
   let data = await response.json();
   let seen = false;
+
   for (let i = 0; i < data.length; i++) {
     let item = data[i];
     if (sentRepositories !== undefined && item.id in sentRepositories) {
       seen=true;
       continue
     }
+    if (i ===  0){
+      console.log('this is item', item);
+    }
     userRepositoriesForCall[item.id] = item.name
   }
   if (!seen) {
     req.session.page += 1; // add a page if the thing isn't seen
+  } else {
+    req.session.page = 0; // restart it again.
   }
   res.status(200).json(userRepositoriesForCall);
   return

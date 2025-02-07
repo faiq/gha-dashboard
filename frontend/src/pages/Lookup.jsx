@@ -51,6 +51,7 @@ export default function Lookup () {
       return;
     }
     // TODO: move this to a trie datastructure.
+    console.log(value);
     if (value.length > 2) {
       const regex = new RegExp(`${value}`, 'i');
       if (repositories.length === 0) {
@@ -65,6 +66,7 @@ export default function Lookup () {
         const newRepositories = await getRepositories();
         setRepositories(newRepositories);
       }
+      console.log(suggested);
       setSuggestedRepositories(suggested);
     }
   }
@@ -73,7 +75,6 @@ export default function Lookup () {
     const searchParams = new URLSearchParams({
       repoName
     });
-    console.log(repoName);
     const data = await fetch(`${BACKEND_URL}/workflows?` + searchParams.toString(), {
       credentials: 'include'
     });
