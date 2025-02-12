@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useCallback } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import '../styles/lookup.css';
 import '../styles/table.css';
 import { Graph } from '../components/Graph.jsx';
@@ -7,7 +7,6 @@ import { UserContext } from '../App';
 import { useNavigate } from 'react-router-dom';
 import { BACKEND_URL, COMMON_HEADERS } from './consts';
 import { ClipLoader } from 'react-spinners';
-import _ from 'lodash';
 
 export default function Lookup () {
   const [repositories, setRepositories] = useState({});
@@ -57,10 +56,6 @@ export default function Lookup () {
     // TODO: move this to a trie datastructure.
     if (value.length > 2) {
       const regex = new RegExp(`${value}`, 'i');
-      if (repositories.length === 0) {
-        const newRepositories = await getRepositories();
-        setRepositories(newRepositories);
-      }
       const suggested = Object.keys(repositories).filter((id) => {
         const name = repositories[id];
         return regex.test(name);
@@ -130,11 +125,6 @@ export default function Lookup () {
     fetchWorkflows(repo);
   }
 
-  const debouncedFilterAndFetchRepositories = useCallback(
-    _.debounce(filterAndFetchRepositories, 300),
-    []
-  );
-
   return (
         <div className="container">
           <div className="form-container">
@@ -142,7 +132,7 @@ export default function Lookup () {
                 <div className="type-ahead-container">
                     <label for="repositoryName">Repository Name:</label>
                     <input value={selected} type="text" id="repositoryName" name="repository" className="type-ahead-input" placeholder="Type to search..." required
-                      onChange={debouncedFilterAndFetchRepositories}
+                      onChange={filterAndFetchRepositories}
                       onFocus={(event) => {
                         event.target.setAttribute('autocomplete', 'off');
                       }}
