@@ -4,4 +4,5 @@ Hosted on [Netlify](https://marvelous-centaur-4ff8ce.netlify.app/)
 
 Screenshots:
 
-![image](https://github.com/user-attachments/assets/e520cdf8-7705-4f1d-8d1b-1a070fb4332a)
+![image](https://github.com/user-attachments/assets/9f56dcf9-c76b-461e-8f89-c30bbeee156e)
+
